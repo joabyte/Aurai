@@ -1,4 +1,4 @@
-flask
-anthropic
-gunicorn
+Flask==2.3.3
+anthropic==0.18.0
+gunicorn==21.2.0
 requests
