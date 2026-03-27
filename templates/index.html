@@ -1,66 +1,47 @@
 
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA Core</title>
+    <title>AURA</title>
     <style>
-        body { background: #0a0f1e; color: #eee; font-family: sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #161b22; border-radius: 12px; padding: 20px; border: 1px solid #30363d; }
-        #chat { height: 400px; overflow-y: auto; margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #30363d; }
-        .user { text-align: right; color: #58a6ff; margin: 10px 0; }
-        .aura { text-align: left; color: #39FF14; margin: 10px 0; }
-        .input-area { display: flex; gap: 10px; }
-        input { flex: 1; background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 6px; }
-        button { background: #238636; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; }
-        .status { font-size: 11px; color: #8b949e; margin-bottom: 10px; }
+        body { background: #0a0f1e; color: #39FF14; font-family: monospace; padding: 20px; }
+        #chat { height: 70vh; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-bottom: 10px; }
+        .u { color: #58a6ff; text-align: right; }
+        input { width: 70%; background: #000; color: #fff; border: 1px solid #39FF14; padding: 10px; }
+        button { background: #39FF14; color: #000; border: none; padding: 10px 20px; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="status" id="status">Sincronizando...</div>
+    <div id="status">Sincronizando...</div>
     <div id="chat"></div>
-    <div class="input-area">
-        <input type="text" id="prompt" placeholder="Orden, señor...">
-        <button id="btn">EJECUTAR</button>
-    </div>
-</div>
+    <input type="text" id="p" placeholder="Orden, señor...">
+    <button onclick="send()">EJECUTAR</button>
 <script>
     async function check() {
-        try {
-            const r = await fetch('/status');
-            const d = await r.json();
-            document.getElementById('status').innerText = d.api_key_configured ? '● SISTEMA ONLINE' : '○ ERROR DE LLAVE';
-        } catch(e) { document.getElementById('status').innerText = '○ OFFLINE'; }
+        const res = await fetch('/status');
+        const d = await res.json();
+        document.getElementById('status').innerText = d.ready ? '● SISTEMA ONLINE' : '○ ERROR DE LLAVE';
     }
     check();
-
-    document.getElementById('btn').onclick = async () => {
-        const p = document.getElementById('prompt');
+    async function send() {
+        const p = document.getElementById('p');
         const chat = document.getElementById('chat');
-        if(!p.value) return;
-        
-        chat.innerHTML += `<div class="user">> ${p.value}</div>`;
-        const query = p.value;
+        const val = p.value;
+        if(!val) return;
+        chat.innerHTML += `<div class="u">> ${val}</div>`;
         p.value = 'Procesando...';
-        p.disabled = true;
-
-        try {
-            const res = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: query })
-            });
-            const data = await res.json();
-            chat.innerHTML += `<div class="aura"><b>AURA:</b> ${data.res}</div>`;
-        } catch(e) {
-            chat.innerHTML += `<div class="aura"><b>AURA:</b> Error de conexión.</div>`;
-        }
+        const res = await fetch('/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({prompt: val})
+        });
+        const d = await res.json();
+        chat.innerHTML += `<div>AURA: ${d.res}</div>`;
         p.value = '';
-        p.disabled = false;
         chat.scrollTop = chat.scrollHeight;
-    };
+    }
 </script>
 </body>
 </html>
