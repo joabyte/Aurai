@@ -18,7 +18,7 @@ def chat():
     try:
         data = request.get_json()
         r = client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-haiku-4-5-20251001",
             max_tokens=1024,
             system="Eres AURA. Llamas al usuario señor.",
             messages=[{"role": "user", "content": data.get("prompt")}]
