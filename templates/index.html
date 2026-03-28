@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,7 +28,7 @@
         const p = document.getElementById('p');
         const chat = document.getElementById('chat');
         const val = p.value;
-        if(!val) return;
+        if (!val) return;
         chat.innerHTML += `<div class="u">> ${val}</div>`;
         p.value = 'Procesando...';
         const res = await fetch('/chat', {
