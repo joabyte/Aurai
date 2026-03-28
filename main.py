@@ -3,14 +3,15 @@ from flask import Flask, render_template, request, jsonify
 import anthropic
 
 app = Flask(__name__)
-# Conexión directa al entorno de Render
 client = anthropic.Anthropic(api_key=os.environ.get("CLAUDE_KEY"))
 
 @app.route('/')
-def home(): return render_template('index.html')
+def home():
+    return render_template('index.html')
 
 @app.route('/status')
-def status(): return jsonify({"ready": bool(os.environ.get("CLAUDE_KEY"))})
+def status():
+    return jsonify({"ready": bool(os.environ.get("CLAUDE_KEY"))})
 
 @app.route('/chat', methods=['POST'])
 def chat():
